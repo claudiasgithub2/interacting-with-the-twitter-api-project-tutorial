@@ -1,119 +1,243 @@
-## Interacting with the Spotify API
+# Interacting with the Twitter API
 
-Spotify can be used as a data source for various data science projects. In this exercise, we will learn how to interact with the API of this social network. Spotipy is an open source Python library that allows high-level use of the Spotify API.
+Twitter can be used as a data source for various data science projects.
 
-### Step 1
+In this exercise we will learn how to interact with the Twitter API. We will practice storing tweets in a dataframe and saving them into a csv file.
 
-The first step is to create an application to be able to access Spotify API services. All the information can be found [here](https://developer.spotify.com/documentation/web-api).
+Tweepy is a Python library to access the Twitter API. You’ll need to set up a twitter application at dev.twitter.com to obtain a set of authentication keys to use with the API. 
 
-Once you have logged in using your Spotify account, you can create the application to access the credentials needed to consume the API. You will need to fill in the following fields:
+**Step 1:** 
 
-![Spotify create app](https://github.com/4GeeksAcademy/interacting-with-the-twitter-api-project-tutorial/blob/main/assets/spotify_1.PNG?raw=true)
+Create an App in the developer account: https://developer.twitter.com/ . 
 
-> NOTE: As we are not going to use this API from any other web application, leave the `Redirect URI` field as `http://localhost/`.
+Make sure to get the bearer_token, consumer_key, consumer_secret, access_token, access_token_secret and have them in a safe place.
+These can be generated in your developer portal, under the “Keys and tokens” tab for your developer App.
+Guidance on how to create a Twitter app (step 1 and 2): https://developer.twitter.com/en/docs/tutorials/step-by-step-guide-to-making-your-first-request-to-the-twitter-api-v2
 
-Once you complete the form, you will have your application created. Next, in the `settings` section you can find your `Client ID` and `Client Secret`.
+**Step 2:** 
 
-### Step 2
+Create a new project folder with a new .py file. 
+Next, we need to install tweepy.
 
-- Create a file `app.py` inside `src` folder.
-- Install all the requirements from the `requirements.txt` file or just the required library.
 
 ```python
-! pip install spotipy
+! pip install tweepy
 ```
 
-    Collecting spotipy
-      Downloading spotipy-2.23.0-py3-none-any.whl (29 kB)
-    Collecting redis>=3.5.3 (from spotipy)
-      Downloading redis-4.6.0-py3-none-any.whl (241 kB)
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 241.1/241.1 kB 11.2 MB/s eta 0:00:00
-    Requirement already satisfied: requests>=2.25.0 in /usr/local/python/3.10.8/lib/python3.10/site-packages (from spotipy) (2.27.1)
-    Requirement already satisfied: six>=1.15.0 in /home/codespace/.local/lib/python3.10/site-packages (from spotipy) (1.16.0)
-    Requirement already satisfied: urllib3>=1.26.0 in /usr/local/python/3.10.8/lib/python3.10/site-packages (from spotipy) (1.26.16)
-    Collecting async-timeout>=4.0.2 (from redis>=3.5.3->spotipy)
-      Downloading async_timeout-4.0.2-py3-none-any.whl (5.8 kB)
-    Requirement already satisfied: certifi>=2017.4.17 in /home/codespace/.local/lib/python3.10/site-packages (from requests>=2.25.0->spotipy) (2023.5.7)
-    Requirement already satisfied: charset-normalizer~=2.0.0 in /usr/local/python/3.10.8/lib/python3.10/site-packages (from requests>=2.25.0->spotipy) (2.0.12)
-    Requirement already satisfied: idna<4,>=2.5 in /home/codespace/.local/lib/python3.10/site-packages (from requests>=2.25.0->spotipy) (3.4)
-    Installing collected packages: async-timeout, redis, spotipy
-    Successfully installed async-timeout-4.0.2 redis-4.6.0 spotipy-2.23.0
+    Collecting tweepy
+      Downloading tweepy-4.10.0-py3-none-any.whl (94 kB)
+    [2K     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m94.4/94.4 kB[0m [31m6.9 MB/s[0m eta [36m0:00:00[0m
+    [?25hRequirement already satisfied: requests<3,>=2.27.0 in /home/gitpod/.pyenv/versions/3.8.13/lib/python3.8/site-packages (from tweepy) (2.27.1)
+    Collecting requests-oauthlib<2,>=1.2.0
+      Downloading requests_oauthlib-1.3.1-py2.py3-none-any.whl (23 kB)
+    Collecting oauthlib<4,>=3.2.0
+      Downloading oauthlib-3.2.0-py3-none-any.whl (151 kB)
+    [2K     [90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m151.5/151.5 kB[0m [31m21.3 MB/s[0m eta [36m0:00:00[0m
+    [?25hRequirement already satisfied: charset-normalizer~=2.0.0 in /home/gitpod/.pyenv/versions/3.8.13/lib/python3.8/site-packages (from requests<3,>=2.27.0->tweepy) (2.0.12)
+    Requirement already satisfied: idna<4,>=2.5 in /home/gitpod/.pyenv/versions/3.8.13/lib/python3.8/site-packages (from requests<3,>=2.27.0->tweepy) (3.3)
+    Requirement already satisfied: certifi>=2017.4.17 in /home/gitpod/.pyenv/versions/3.8.13/lib/python3.8/site-packages (from requests<3,>=2.27.0->tweepy) (2022.5.18.1)
+    Requirement already satisfied: urllib3<1.27,>=1.21.1 in /home/gitpod/.pyenv/versions/3.8.13/lib/python3.8/site-packages (from requests<3,>=2.27.0->tweepy) (1.26.9)
+    Installing collected packages: oauthlib, requests-oauthlib, tweepy
+    Successfully installed oauthlib-3.2.0 requests-oauthlib-1.3.1 tweepy-4.10.0
+    [33mWARNING: There was an error checking the latest version of pip.[0m[33m
+    [0m
 
-### Step 3
+**Step 3:** 
 
-- Create a file `.env` on the root folder of the project.
-- Insert both the `client ID` and `client secret` in the file, for example:
+You need to provide the Twitter keys and tokens in order to use the API v2.
 
-```
-CLIENT_ID="AAAAAAAAAAAABBBBBBBBBBBBCCCCCCCCCCCCC111111222222"
-CLIENT_SECRET="DDDDDDDDDDDDDEEEEEEEEEEEEEEEEFFFFFFFFFFFFFF333333344444"
-```
-
-- Now we can insert this information in our Python program to start working with it
+To do it in a safe way, you should store the secrets in a seperate .env file.
+A dotenv file contains only text, where it has one environment variable assignment per line.
+Create a .env file in your project and add your secret keys or passwords: 
 
 ```py
-import os
-from dotenv import load_dotenv
-load_dotenv()
-
-client_id = os.environ.get('CLIENT_ID')
-client_secret = os.environ.get('CLIENT_SECRET')
+consumer_key="insert your API key"
+consumer_secret="insert your API secret"
+access_token="insert your access token"
+access_token_secret="insert your access token secret"
+bearer_token="insert your bearer token"
 ```
 
-### Step 4
 
-After downloading the library and loading the environment variables, we can start working by initiating the API connection:
+>Important: Make sure to add it in your .gitignore file, which is not saved to source control, so that you aren't putting potentially sensitive information at risk. 
+Now, you need to install python-dotenvpackage. python-dotenv is a Python package that lets your Python app read a .env file. This package will search for a .env and if it finds one, will expose the variables in it to the app.
+
+Example:
 
 ```py
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
+from dotenv import load_dotenv   #for python-dotenv method
+load_dotenv()                    
 
-con = spotipy.Spotify(auth_manager = SpotifyClientCredentials(client_id = client_id,
-                                                              client_secret = client_secret))
+import os 
+
+consumer_key = os.environ.get('CONSUMER_KEY')
+consumer_secret = os.environ.get('CONSUMER_SECRET')
+access_token = os.environ.get('ACCESS_TOKEN')
+access_token_secret = os.environ.get('ACCESS_TOKEN_SECRET')
+bearer_token = os.environ.get('BEARER_TOKEN')
+
 ```
 
-Now we can work and interact with the API to perform the queries we want to perform.
+To set password or secret keys in environment variable on Linux(and Mac) or Windows, see the following link: https://dev.to/biplov/handling-passwords-and-secret-keys-using-environment-variables-2ei0
 
-### Step 5
+**Step 4:** 
 
-In this case I have chosen Drake. First I get his ID by searching for his Spotify page and getting it from the URI. Now, I perform the search for his top 10 songs.
+Import Tweepy
 
-```py
-artist_id = "3TVXtAsR1Inumwj472S9r4"
 
-response = sp.artist_top_tracks("3TVXtAsR1Inumwj472S9r4")
-if response:
-  # We keep the "tracks" object of the answer
-  tracks = response["tracks"]
-  # We select, for each song, the data we are interested in and discard the rest
-  tracks = [{k: (v/(1000*60))%60 if k == "duration_ms" else v for k, v in track.items() if k in ["name", "popularity", "duration_ms"]} for track in tracks]
+```python
+# your code here
+import tweepy
 ```
 
-### Step 6
+**Step 5:** 
 
-Once we have modified the answer, we create the Pandas DataFrame from it:
+Make a connection with API v2. Use your in the function tweepy.Client(). Use the following documentation for guidance on the parameters: https://docs.tweepy.org/en/stable/client.html
 
-```py
+
+```python
+#import requests
+import requests
+
+# Use tweepy.Client()
+client = tweepy.Client( bearer_token=bearer_token, 
+                        consumer_key=consumer_key, 
+                        consumer_secret=consumer_secret, 
+                        access_token=access_token, 
+                        access_token_secret=access_token_secret, 
+                        return_type = requests.Response,
+                        wait_on_rate_limit=True)
+```
+
+**Step 6:** 
+
+Make a query. Search tweets that have the hashtag #100daysofcode and the word python or pandas, from the last 7 days (search_recent_tweets). 
+
+Do not include retweets. Limit the result to a maximum of 100 Tweets.
+
+Also include some additional information with tweet_fields (author id, when the tweet was created, the language of the tweet text).
+
+You can use this link for guidance on how to create the query: https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query
+
+
+```python
+# Define query
+query = '#100daysofcode (pandas OR python) -is:retweet'
+
+# get max. 100 tweets
+tweets = client.search_recent_tweets(query=query, 
+                                    tweet_fields=['author_id','created_at','lang'],
+                                     max_results=100)
+```
+
+**Step 7:** 
+
+Convert to pandas Dataframe
+
+
+```python
 import pandas as pd
 
-tracks_df = pd.DataFrame.from_records(tracks)
-tracks_df.sort_values(["popularity"], inplace = True)
+# Save data as dictionary
+tweets_dict = tweets.json() 
 
-print(tracks_df.head(3))
+# Extract "data" value from dictionary
+tweets_data = tweets_dict['data'] 
+
+# Transform to pandas Dataframe
+df = pd.json_normalize(tweets_data) 
 ```
 
-### Step 7
+**Step 8:** 
 
-A scatter plot is a good alternative to determine visually and graphically whether two variables may or may not be related to each other:
+Take a look at your dataframe
 
-```py
+
+```python
+df
+```
+
+**Step 9:**
+
+Save data in a csv file named 'coding-tweets'
+
+
+```python
+# save df
+df.to_csv("coding-tweets.csv")
+```
+
+**Step 10:** 
+
+Now that you have your DataFrame of tweets set up, you're going to do a bit of text analysis to count how many tweets contain the words 'pandas', and 'python'. Define the following function word_in_text(), which will tell you whether the first argument (a word) occurs within the 2nd argument (a tweet). 
+
+>Make sure to convert any word or tweet text into lowercase.
+>You can use the re python library (regular expression operations). See the documentation for guidance: https://docs.python.org/3/library/re.html#
+
+
+```python
+#import re
+import re
+
+#define your function here
+def word_in_text(word, text):
+    word = word.lower()
+    text = text.lower()
+    match = re.search(word, text)
+
+    if match:
+        return True
+    return False
+
+```
+
+**Step 11:**
+
+Iterate through dataframe rows counting the number of tweets in which pandas and python are mentioned, using your word_in_text() function.
+
+
+```python
+# Initialize list to store tweet counts
+[pandas, python] = [0, 0]
+
+# Iterate through df, counting the number of tweets in which each(pandas and python) is mentioned.
+for index, row in df.iterrows():
+    pandas += word_in_text('pandas', row['text'])
+    python += word_in_text('python', row['text'])
+```
+
+**Step 12:** 
+
+Visualize the data
+
+
+```python
+# Import packages
+import matplotlib.pyplot as plt
 import seaborn as sns
 
-scatter_plot = sns.scatterplot(data = tracks_df, x = "popularity", y = "duration_ms")
-fig = scatter_plot.get_figure()
-fig.savefig("scatter_plot.png")
+# Set seaborn style
+sns.set(color_codes=True)
+
+# Create a list of labels:cd
+cd = ['pandas', 'python']
+
+# Plot the bar chart
+ax = sns.barplot(cd, [pandas, python])
+ax.set(ylabel="count")
+plt.show()
 ```
 
-![Scatter Plot](https://github.com/4GeeksAcademy/interacting-with-the-twitter-api-project-tutorial/blob/main/assets/scatter_plot.png?raw=true)
+Source: 
 
-As can be seen, there is no direct relationship between the length of the song and its popularity.
+https://www.kirenz.com/post/2021-12-10-twitter-api-v2-tweepy-and-pandas-in-python/twitter-api-v2-tweepy-and-pandas-in-python/
+
+https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query
+
+https://www.indeed.com/q-Remote-Entry-Level-Human-Resource-Position-jobs.html?vjk=f66e30024cc1150f
+
+https://www.codegrepper.com/code-examples/python/how+to+install+dotenv+python
+
+https://dev.to/jakewitcher/using-env-files-for-environment-variables-in-python-applications-55a1
+
+https://dev.to/biplov/handling-passwords-and-secret-keys-using-environment-variables-2ei0
