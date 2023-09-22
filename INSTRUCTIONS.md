@@ -1,69 +1,117 @@
-## Interacting with Spotify's API
+# Interacting with the Twitter API
 
-Spotify can be used as a data source for various data science projects. In this exercise, we will learn how to interact with the API of this social network. `Spotipy` is an open source and Python library that allows high-level use of the Spotify API.
+Twitter can be used as a data source for various data science projects.
 
-### Step 1: Create a Spotify Developer Account
-The first step is to create an application to be able to access Spotify's API services. You can find all the information [here](https://developer.spotify.com/documentation/web-api).
+In this exercise, we will learn how to interact with the Twitter API. We will practice storing tweets in a dataframe and saving them into a csv file.
 
-Once you have logged in using your Spotify account, you will be able to create the application to access the credentials needed to consume the API. You will need to fill in the following fields:
+Tweepy is a Python library to access the Twitter API. You’ll need to set up a Twitter application at dev.twitter.com to obtain a set of authentication keys to use with the API. 
 
-![Spotify create app](https://github.com/4GeeksAcademy/interacting-with-the-twitter-api-project-tutorial/blob/main/assets/spotify_1.PNG?raw=true)
+### Step 1: Create a Twitter developer account
 
-> NOTE: As we are not going to use this API from any other web application, leave the `Redirect URI` field as `http://localhost/`.
+Create an App in the developer account: https://developer.twitter.com/ . 
+Make sure to get the bearer_token, consumer_key, consumer_secret, access_token, access_token_secret and have them in a safe place.
 
-Once you complete the form, you will have your application created. Next, in the `settings` section you can find your `Client ID` and `Client Secret`.
+These can be generated in your developer portal, under the “Keys and tokens” tab for your developer App.
 
-### Step 2: Initial configuration
+Guidance on how to create a Twitter app (step 1 and 2): https://developer.twitter.com/en/docs/tutorials/step-by-step-guide-to-making-your-first-request-to-the-twitter-api-v2
 
-- Create an app.py file inside the `./src/` folder.
-- Make sure you have installed the Python library we are going to use, and if not, install it: `pip install spotipy`.
+### Step 2: Initial setup
+
+- Create an app.py file inside the `./src/` folder. 
+- Install Tweepy using PIP.
 
 ### Step 3: Environment variables
 
-You must provide the Spotify key and token in order to use the API and access its functionality. As we saw in the previous project, you can easily do this by creating a `.env` file in the root directory of your project.
+You need to provide the Twitter keys and tokens in order to use the API v2.
 
-The third step is to create an `.env` file in your project and add your secret keys or passwords:
+To do it in a safe way, you should store the secrets in a separate .env file.
+A dotenv file contains only text, where it has one environment variable assignment per line.
+Create a .env file in your project and add your secret keys or passwords: 
 
 ```py
-CLIENT_ID="insert your client key"
-CLIENT_SECRET="insert your client secret"
+CONSUMER_KEY="insert your API key"
+CONSUMER_SECRET="insert your API secret"
+ACCESS_TOKEN="insert your access token"
+ACCESS_TOKEN_SECRET="insert your access token secret"
+BEARER_TOKEN="insert your bearer token"
 ```
 
-> NOTE: Be sure to add the .env inside your .gitignore file, which is not saved in source control, so that you are not putting potentially sensitive information at risk.
-
-Now, you must install python-dotenvpackage. python-dotenvpackage is a Python package that allows your Python application to read an .env file. This package will look for an .env and, if found, expose the variables it contains to the application.
+> Important: Make sure to add the .env inside your .gitignore file, which is not saved to source control, so that you aren't putting potentially sensitive information at risk. 
+Now, you need to install python-dotenvpackage. python-dotenv is a Python package that lets your Python app read a .env file. This package will search for a .env and if it finds one, will expose the variables in it to the app.
 
 Example:
 
 ```py
-from dotenv import load_dotenv
-load_dotenv()
+from dotenv import load_dotenv   #for python-dotenv method
+load_dotenv()                    
 
-import os
+import os 
 
-client_id = os.environ.get("CLIENT_ID")
-client_secret = os.environ.get("CLIENT_SECRET")
+consumer_key = os.environ.get('CONSUMER_KEY')
+consumer_secret = os.environ.get('CONSUMER_SECRET')
+access_token = os.environ.get('ACCESS_TOKEN')
+access_token_secret = os.environ.get('ACCESS_TOKEN_SECRET')
+bearer_token = os.environ.get('BEARER_TOKEN')
+
 ```
 
-### Step 4: Initialize Spotipy library
+To set password or secret keys in environment variable on Linux(and Mac) or Windows, see the following link: https://dev.to/biplov/handling-passwords-and-secret-keys-using-environment-variables-2ei0
 
-- Import Spotipy.
-- Make the connection to the API. To do this, you can use the `spotipy.Spotify()` function.
+### Step 4: Innitialize the tweepy library
 
-> NOTE: Use the following documentation as a guide on parameters: https://spotipy.readthedocs.io/en/2.22.1
+- Import Tweepy and [requests library](https://requests.readthedocs.io/en/latest/)
+- Make a connection with API v2. Use the variables in the function `tweepy.Client()`. 
 
-### Step 5: Make API requests
+> Use the following documentation for guidance on the parameters: https://docs.tweepy.org/en/stable/client.html
+### Step 5: Start making requests to the API
 
-- Start interacting with the Spotify API: Get the top 10 of your favorite artist's songs. To do this, you will have to find the `ID` of the artist to use in the library. This identifier is the web address that the artist has in Spotify:
+- Make a query: Search tweets that have the hashtag #100daysofcode and the word python or pandas, from the last 7 days (search_recent_tweets). 
+- Do not include retweets. Limit the result to a maximum of 100 Tweets.
+- Also include some additional information with tweet_fields (author id, when the tweet was created, the language of the tweet text).
 
-![Spotify search for artist ID](https://github.com/4GeeksAcademy/interacting-with-the-twitter-api-project-tutorial/blob/main/assets/spotify_2.png?raw=true)
+You can use this link for guidance on how to create the query: https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query
 
-- Once you have the API response, keep the `tracks` element, which will contain the most played songs of the artist, keep the name of the song, the popularity and the duration (in minutes).
 
-### Step 6: Transform to Pandas DataFrame
+1. Define query.
+2. Get a max. 100 tweets (it's the max allowed by the twitter API).
 
-Since the result obtained in these steps is likely to be in table format, convert it to a DataFrame by importing the data in its dictionary format. Next, sort the songs by increasing popularity and display the resulting top 3.
 
-### Step 7: Analyze statistical relationship
+### Step 6: Convert to pandas Dataframe
 
-Does duration have a relationship with popularity? Could we say that a song that lasts a short time may be more popular than a song that lasts longer? Analyze it by plotting a `scatter plot` and argue your answer.
+1. Import pandas.
+2. Save data as dictionary.
+3. Extract "data" value from dictionary.
+4. Transform to pandas Dataframe.
+5. Take a look at the dataframe to make sure is correct `df.head()`.
+6. Save the data as a CSV file named coding-tweets.csv.
+
+
+### Step 7: Search for the words
+
+Now that you have your DataFrame of tweets set up, you're going to do a bit of text analysis to count how many tweets contain the words 'pandas', and 'python'. Define the following function word_in_text(), which will tell you whether the first argument (a word) occurs within the 2nd argument (a tweet). 
+
+> Make sure to convert any word or tweet text into lowercase.
+> You can use the re python library (regular expression operations). See the documentation for guidance: https://docs.python.org/3/library/re.html#
+
+1. Import `re` library using `import re`
+2. Define your `word_in_text` function and implement the code.
+
+### Step 11:
+
+Iterate through dataframe rows counting the number of tweets in which pandas and python are mentioned, using your word_in_text() function.
+
+1. Initialize the list to store tweet counts.
+2. Iterate through df, counting the number of tweets in which each(pandas and python) is mentioned.
+
+### Step 12: Visualize the data
+
+1. Import packages
+2. Set seaborn style
+3. Create a list of labels:cd
+4. Plot the bar chart
+
+Source: 
+
+https://www.kirenz.com/post/2021-12-10-twitter-api-v2-tweepy-and-pandas-in-python/twitter-api-v2-tweepy-and-pandas-in-python/
+
+https://developer.twitter.com/en/docs/twitter-api/tweets/search/integrate/build-a-query
