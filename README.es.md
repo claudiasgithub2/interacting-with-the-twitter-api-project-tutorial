@@ -1,10 +1,10 @@
 <!-- hide -->
-# Tutorial de integración con el proyecto API de Spotify
+# Tutorial de integración con el proyecto API de Twitter
 <!-- endhide -->
 
-1. Crea una aplicación para desarrolladores de Spotify mediante el Portal para desarrolladores de Spotify. 
-2. Conéctate con la API de Spotify.
-3. Recupera y descarga datos de la API de Spotify.
+1. Crea una aplicación para desarrolladores de Twitter mediante el Portal para desarrolladores de Twitter. 
+2. Conéctate con la API de Twitter.
+3. Recupera y descarga datos de la API de Twitter.
 4. Crea un marco de datos de Python Pandas para facilitar la manipulación de los datos.
 5. Guarda los datos en una base de datos SQL.
 
